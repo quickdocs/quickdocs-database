@@ -5,7 +5,8 @@
         :quickdocs-database.model.project
         :quickdocs-database.model.system)
   (:import-from :datafly
-                :retrieve-all))
+                :retrieve-all
+                :execute))
 (in-package :quickdocs-database)
 
 (syntax:use-syntax :annot)
