@@ -56,6 +56,7 @@
                         description
                         long-description
                         license
+                        homepage-url
 
                         authors
                         maintainers)
@@ -66,7 +67,8 @@
            :version version
            :description description
            :long_description long-description
-           :license license)))
+           :license license
+           :homepage_url homepage-url)))
   (let ((system (retrieve-one
                  (select :*
                    (from :system)

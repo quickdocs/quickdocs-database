@@ -26,7 +26,6 @@
   ql-dist-version
   name
   release-version
-  homepage-url
   repos-url
   archive-url)
 
@@ -50,6 +49,7 @@
              (from :project_category)
              (where (:= :project_name (project-name project)))))))
 
+@export-constructors
 @export-accessors
 @model
 (defstruct project-readme
@@ -81,7 +81,6 @@
 (defun create-project (&key (ql-dist-version (ql-dist:version (ql-dist:dist "quicklisp")))
                          name
                          release-version
-                         homepage-url
                          repos-url
                          archive-url
 
@@ -93,7 +92,6 @@
      (set= :ql_dist_version ql-dist-version
            :name name
            :release_version release-version
-           :homepage_url homepage-url
            :repos_url repos-url
            :archive_url archive-url)))
   (let ((project
