@@ -15,6 +15,7 @@
 (syntax:use-syntax :annot)
 
 @export-accessors
+@export
 @model
 (defstruct (project (:has-a (readme project-readme)
                      (where (:= :project_id id)))

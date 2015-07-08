@@ -13,6 +13,7 @@
 (syntax:use-syntax :annot)
 
 @export-accessors
+@export
 @model
 (defstruct (system
             (:has-many (dependencies system)
