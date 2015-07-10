@@ -73,3 +73,12 @@ CREATE TABLE IF NOT EXISTS preference (
   value VARCHAR(128) NOT NULL DEFAULT '',
   PRIMARY KEY (name)
 );
+
+CREATE TABLE IF NOT EXISTS system_packages (
+  system_id BIGINT UNSIGNED NOT NULL,
+  packages TEXT NOT NULL DEFAULT '',
+  failed TINYINT NOT NULL DEFAULT '0',
+  error_log TEXT NOT NULL DEFAULT '',
+  FOREIGN KEY (system_id) REFERENCES system (id) ON DELETE CASCADE,
+  UNIQUE KEY (system_id)
+);

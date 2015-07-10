@@ -97,3 +97,12 @@
    (insert-into :system_dependencies
      (set= :system_id system-id
            :depends_system_id depends-system-id))))
+
+@export
+(defun create-system-packages (system-id packages &key failed (error-log ""))
+  (execute
+   (insert-into :system_packages
+     (set= :system_id system-id
+           :packages (prin1-to-string packages)
+           :failed failed
+           :error_log (or error-log "")))))
