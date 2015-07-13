@@ -30,26 +30,6 @@
   repos-url
   archive-url)
 
-@export
-(defun project-cliki-description (project)
-  (check-type project project)
-  (getf (retrieve-one
-         (select :description
-           (from :project_cliki_description)
-           (where (:= :project_id (project-id project)))
-           (limit 1)))
-        :description))
-
-@export
-(defun project-categories (project)
-  (check-type project project)
-  (mapcar (lambda (row)
-            (getf row :category))
-          (retrieve-all
-           (select :category
-             (from :project_category)
-             (where (:= :project_name (project-name project)))))))
-
 @export-constructors
 @export-accessors
 @model
@@ -86,7 +66,7 @@
                          archive-url
 
                          project-readme)
-  (check-type project-readme project-readme)
+  (check-type project-readme (or null project-readme))
 
   (execute
    (insert-into :project
@@ -107,4 +87,5 @@
       (execute
        (insert-into :project_readme
          (set= :project_id (project-id project)
-               :filename (project-readme-filename project-readme)))))))
+               :filename (project-readme-filename project-readme)))))
+    project))

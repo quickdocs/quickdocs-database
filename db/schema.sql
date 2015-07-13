@@ -18,13 +18,6 @@ CREATE TABLE IF NOT EXISTS project_readme (
   FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS project_cliki_description (
-  project_id BIGINT UNSIGNED NOT NULL,
-  description TEXT,
-  FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE,
-  UNIQUE KEY (project_id)
-);
-
 CREATE TABLE IF NOT EXISTS system (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   project_id BIGINT UNSIGNED NOT NULL,
@@ -48,31 +41,16 @@ CREATE TABLE IF NOT EXISTS system_author (
   FOREIGN KEY (system_id) REFERENCES system (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
-CREATE TABLE IF NOT EXISTS project_category (
-  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  project_name VARCHAR(64) NOT NULL,
-  category VARCHAR(256),
-  PRIMARY KEY (id),
-  FOREIGN KEY (project_name) REFERENCES project (name) ON DELETE CASCADE,
-  UNIQUE KEY (project_name, category),
-  KEY (category)
-) ENGINE=InnoDB DEFAULT CHARSET=binary;
-
 CREATE TABLE IF NOT EXISTS system_dependencies (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   system_id BIGINT UNSIGNED NOT NULL,
   depends_system_id BIGINT UNSIGNED NOT NULL,
+  is_for_defsystem TINYINT NOT NULL DEFAULT '0',
   PRIMARY KEY (id),
-  UNIQUE KEY (system_id, depends_system_id),
+  UNIQUE KEY (system_id, depends_system_id, is_for_defsystem),
   FOREIGN KEY (system_id) REFERENCES system (id) ON DELETE CASCADE,
   FOREIGN KEY (depends_system_id) REFERENCES system (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
-
-CREATE TABLE IF NOT EXISTS preference (
-  name VARCHAR(32) NOT NULL,
-  value VARCHAR(128) NOT NULL DEFAULT '',
-  PRIMARY KEY (name)
-);
 
 CREATE TABLE IF NOT EXISTS system_packages (
   system_id BIGINT UNSIGNED NOT NULL,
@@ -81,4 +59,27 @@ CREATE TABLE IF NOT EXISTS system_packages (
   error_log TEXT NOT NULL DEFAULT '',
   FOREIGN KEY (system_id) REFERENCES system (id) ON DELETE CASCADE,
   UNIQUE KEY (system_id)
+);
+
+CREATE TABLE IF NOT EXISTS cliki (
+  project_name VARCHAR(64) NOT NULL,
+  body TEXT NOT NULL,
+  updated_at INTEGER NOT NULL,
+  FOREIGN KEY (project_name) REFERENCES project (name) ON DELETE NO ACTION,
+  UNIQUE KEY (project_name)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
+
+CREATE TABLE IF NOT EXISTS cliki_project_category (
+  project_name VARCHAR(64) NOT NULL,
+  category VARCHAR(256) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (project_name) REFERENCES cliki (project_name) ON DELETE CASCADE,
+  UNIQUE KEY (project_name, category),
+  KEY (category)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
+
+CREATE TABLE IF NOT EXISTS preference (
+  name VARCHAR(32) NOT NULL,
+  value VARCHAR(128) NOT NULL DEFAULT '',
+  PRIMARY KEY (name)
 );

@@ -92,11 +92,12 @@
     system))
 
 @export
-(defun create-dependency (system-id depends-system-id)
+(defun create-dependency (system-id depends-system-id &key is-for-defsystem)
   (execute
    (insert-into :system_dependencies
      (set= :system_id system-id
-           :depends_system_id depends-system-id))))
+           :depends_system_id depends-system-id
+           :is_for_defsystem (if is-for-defsystem 1 0)))))
 
 @export
 (defun create-system-packages (system-id packages &key failed (error-log ""))
@@ -104,5 +105,5 @@
    (insert-into :system_packages
      (set= :system_id system-id
            :packages (prin1-to-string packages)
-           :failed failed
+           :failed (if failed 1 0)
            :error_log (or error-log "")))))
