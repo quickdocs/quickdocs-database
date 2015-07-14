@@ -65,15 +65,12 @@ CREATE TABLE IF NOT EXISTS cliki (
   project_name VARCHAR(64) NOT NULL,
   body TEXT NOT NULL,
   updated_at INTEGER NOT NULL,
-  FOREIGN KEY (project_name) REFERENCES project (name) ON DELETE NO ACTION,
   UNIQUE KEY (project_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
 CREATE TABLE IF NOT EXISTS cliki_project_category (
   project_name VARCHAR(64) NOT NULL,
   category VARCHAR(256) NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (project_name) REFERENCES cliki (project_name) ON DELETE CASCADE,
   UNIQUE KEY (project_name, category),
   KEY (category)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
