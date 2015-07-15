@@ -2,7 +2,8 @@
 (defpackage quickdocs-database.model.system
   (:use :cl
         :cl-annot.class
-        :sxql)
+        :sxql
+        :quickdocs-database.preference)
   (:import-from :datafly
                 :model
                 :retrieve-all
@@ -20,35 +21,33 @@
              (select :system.*
                (from :system_dependencies)
                (left-join :system :on (:= :system_dependencies.depends_system_id :system.id))
-               (where (:= :system_dependencies.system_id id)))))
+               (where (:= :system_dependencies.system_id id))))
+            (:has-many (authors system-author)
+             (select :*
+               (from :system_author)
+               (where (:= :system_id id))))
+            (:inflate (description long-description license homepage-url)
+             #'datafly.inflate:octet-vector-to-string))
   id
   project-id
   name
   version
   description
   long-description
+  homepage-url
   license)
+@export 'system-dependencies
 
-(defun retrieve-system-authors (system-id &optional (type "author"))
-  (retrieve-all
+@export
+(defun retrieve-system (name &key (ql-dist-version (preference "ql-dist-version")))
+  (retrieve-one
    (select :*
-     (from :system_author)
-     (where (:and (:= :system_id system-id)
-                  (:= :type type))))))
-
-@export
-(defun system-authors (system)
-  (check-type system system)
-  (mapcar (lambda (row)
-            (getf row :author-name))
-          (retrieve-system-authors (system-id system) "author")))
-
-@export
-(defun system-maintainers (system)
-  (check-type system system)
-  (mapcar (lambda (row)
-            (getf row :author-name))
-          (retrieve-system-authors (system-id system) "maintainer")))
+     (from :system)
+     (left-join :project :on (:= :system.project_id :project.id))
+     (where (:and (:= :ql_dist_version ql-dist-version)
+                  (:= :system.name name)))
+     (limit 1))
+   :as 'system))
 
 @export
 (defun create-system (&key project-id
@@ -90,6 +89,15 @@
                :author_name maintainer
                :type "maintainer"))))
     system))
+
+@export-accessors
+@export
+@model
+(defstruct (system-author (:inflate type #'datafly:string-to-keyword))
+  id
+  system-id
+  author-name
+  type)
 
 @export
 (defun create-dependency (system-id depends-system-id &key is-for-defsystem)

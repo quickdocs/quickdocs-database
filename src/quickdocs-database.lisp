@@ -1,5 +1,6 @@
 (in-package :cl-user)
 (defpackage quickdocs-database
+  (:nicknames qd-db qd.db)
   (:use :cl
         :sxql
         :quickdocs-database.model.project
@@ -13,6 +14,7 @@
 
 (cl-reexport:reexport-from :quickdocs-database.model.project)
 (cl-reexport:reexport-from :quickdocs-database.model.system)
+(cl-reexport:reexport-from :quickdocs-database.preference)
 
 @export
 (defun all-dist-projects (ql-dist-version)

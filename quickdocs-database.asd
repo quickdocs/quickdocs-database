@@ -18,15 +18,18 @@
   :license "BSD 2-Clause"
   :depends-on (:datafly
                :sxql
+               :babel
                :cl-syntax-annot
                :cl-reexport)
   :components ((:module "src"
                 :components
-                ((:file "quickdocs-database" :depends-on ("model"))
+                ((:file "quickdocs-database" :depends-on ("model" "preference"))
                  (:module "model"
+                  :depends-on ("preference")
                   :components
                   ((:file "project" :depends-on ("system"))
-                   (:file "system"))))))
+                   (:file "system")))
+                 (:file "preference"))))
   :description "Quickdocs database accessor collections"
   :long-description
   #.(with-open-file (stream (merge-pathnames
