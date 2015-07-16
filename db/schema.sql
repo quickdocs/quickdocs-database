@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS project (
   ql_dist_version CHAR(10) NOT NULL,
   name VARCHAR(64) NOT NULL,
   release_version CHAR(10) NOT NULL,
+  homepage_url TINYTEXT,
   repos_url TINYTEXT,
   archive_url TINYTEXT NOT NULL,
   PRIMARY KEY (id),
