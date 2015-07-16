@@ -76,6 +76,20 @@ CREATE TABLE IF NOT EXISTS cliki_project_category (
   KEY (category)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
+CREATE TABLE IF NOT EXISTS repos_info (
+  project_name VARCHAR(64) NOT NULL,
+  type ENUM('github', 'bitbucket') NOT NULL,
+  repos_id TINYTEXT NOT NULL,
+  description TEXT,
+  homepage_url TINYTEXT,
+  watch_count INTEGER NOT NULL,
+  forks_count INTEGER NOT NULL,
+  stars_count INTEGER,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  UNIQUE KEY (project_name)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
+
 CREATE TABLE IF NOT EXISTS preference (
   name VARCHAR(32) NOT NULL,
   value VARCHAR(128) NOT NULL DEFAULT '',
