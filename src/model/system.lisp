@@ -31,6 +31,8 @@
              (select :*
                (from :system_author)
                (where (:= :system_id id))))
+            (:has-a (extracted-info system-extracted-info)
+             (where (:= :system_id id)))
             (:inflate (description long-description license homepage-url)
              #'datafly.inflate:octet-vector-to-string))
   id
@@ -44,6 +46,7 @@
 @export 'system-dependencies
 @export 'system-dependees
 @export 'system-authors
+@export 'system-extracted-info
 
 @export
 (defun retrieve-system (name &key (ql-dist-version (preference "ql-dist-version")))
@@ -123,10 +126,21 @@
            :is_for_defsystem (if is-for-defsystem 1 0)))))
 
 @export
-(defun create-system-packages (system-id packages &key failed (error-log ""))
+(defun create-system-extracted-info (system-id packages &key failed (error-log ""))
   (execute
-   (insert-into :system_packages
+   (insert-into :system_extracted_info
      (set= :system_id system-id
            :packages (prin1-to-string packages)
            :failed (if failed 1 0)
            :error_log (or error-log "")))))
+
+@export-accessors
+@export
+@model
+(defstruct (system-extracted-info (:inflate packages
+                                   (lambda (packages)
+                                     (ignore-errors (read-from-string packages))))
+                                  (:inflate failed #'datafly:tinyint-to-boolean))
+  packages
+  failed
+  error-log)

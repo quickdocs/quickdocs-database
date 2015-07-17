@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS system_dependencies (
   FOREIGN KEY (depends_system_id) REFERENCES system (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
-CREATE TABLE IF NOT EXISTS system_packages (
+CREATE TABLE IF NOT EXISTS system_extracted_info (
   system_id BIGINT UNSIGNED NOT NULL,
   packages TEXT NOT NULL DEFAULT '',
   failed TINYINT NOT NULL DEFAULT '0',
