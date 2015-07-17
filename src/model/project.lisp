@@ -23,6 +23,8 @@
                 :retrieve-one-value
                 #+nil :retrieve-all-values
                 :execute)
+  (:import-from :datafly.inflate
+                :octet-vector-to-string)
   (:import-from :function-cache
                 :defcached))
 (in-package :quickdocs-database.model.project)
@@ -38,7 +40,7 @@
                      (select :*
                        (from :system)
                        (where (:= :project_id id))))
-                    (:inflate (repos-url archive-url) #'datafly.inflate:octet-vector-to-string))
+                    (:inflate (repos-url archive-url) #'octet-vector-to-string))
   id
   ql-dist-version
   name

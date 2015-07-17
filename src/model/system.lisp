@@ -8,7 +8,11 @@
                 :model
                 :retrieve-all
                 :retrieve-one
-                :execute))
+                :execute)
+  (:import-from :datafly.inflate
+                :tinyint-to-boolean
+                :string-to-keyword
+                :octet-vector-to-string))
 (in-package :quickdocs-database.model.system)
 
 (syntax:use-syntax :annot)
@@ -34,7 +38,7 @@
             (:has-a (extracted-info system-extracted-info)
              (where (:= :system_id id)))
             (:inflate (description long-description license homepage-url)
-             #'datafly.inflate:octet-vector-to-string))
+             #'octet-vector-to-string))
   id
   project-id
   name
@@ -103,7 +107,7 @@
 @export-accessors
 @export
 @model
-(defstruct (system-author (:inflate type #'datafly:string-to-keyword))
+(defstruct (system-author (:inflate type #'string-to-keyword))
   id
   system-id
   author-name
@@ -140,7 +144,7 @@
 (defstruct (system-extracted-info (:inflate packages
                                    (lambda (packages)
                                      (ignore-errors (read-from-string packages))))
-                                  (:inflate failed #'datafly:tinyint-to-boolean))
+                                  (:inflate failed #'tinyint-to-boolean))
   packages
   failed
   error-log)
