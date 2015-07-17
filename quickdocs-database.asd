@@ -17,6 +17,7 @@
   :author "Eitaro Fukamachi"
   :license "BSD 2-Clause"
   :depends-on (:datafly
+               :function-cache
                :sxql
                :babel
                :cl-syntax-annot

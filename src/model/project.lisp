@@ -7,7 +7,14 @@
   (:import-from :quickdocs-database.model.system
                 :system
                 :system-name
+                :system-license
+                :system-authors
+                :system-author-type
+                :system-author-author-name
+                :system-author=
                 :system-description
+                :system-dependencies
+                :system-dependees
                 :system-homepage-url)
   (:import-from :datafly
                 :model
@@ -15,7 +22,9 @@
                 :retrieve-all
                 :retrieve-one-value
                 #+nil :retrieve-all-values
-                :execute))
+                :execute)
+  (:import-from :function-cache
+                :defcached))
 (in-package :quickdocs-database.model.project)
 
 (syntax:use-syntax :annot)
@@ -39,6 +48,16 @@
   archive-url)
 @export 'project-readme
 @export 'project-systems
+
+@export
+(defun project-systems* (project)
+  (let* ((primary-system (project-primary-system project))
+         (systems (remove (system-name primary-system)
+                          (project-systems project)
+                          :test #'string=
+                          :key #'system-name)))
+    (cons primary-system
+          systems)))
 
 @export
 (defun project-primary-system (project)
@@ -71,6 +90,35 @@
         (babel:octets-to-string body)))))
 
 @export
+(defcached project-authors-all (project)
+  (delete-duplicates
+   (mapcan #'system-authors (project-systems* project))
+   :test #'system-author=
+   :from-end t))
+
+@export
+(defun project-authors (project)
+  (mapcar #'system-author-author-name
+          (remove-if-not (lambda (author)
+                           (eq (system-author-type author) :author))
+                         (project-authors-all project))))
+
+@export
+(defun project-maintainers (project)
+  (mapcar #'system-author-author-name
+          (remove-if-not (lambda (author)
+                           (eq (system-author-type author) :maintainer))
+                         (project-authors-all project))))
+
+@export
+(defun project-licenses (project)
+  (delete-duplicates
+   (remove nil
+           (mapcar #'system-license (project-systems* project)))
+   :test #'equal
+   :from-end t))
+
+@export
 (defun project-categories (project)
   (datafly.db:retrieve-all-values
    (select :category
@@ -78,6 +126,35 @@
      (where (:= :project_name (project-name project))))
    :category))
 
+@export
+(defun project-dependencies (project)
+  (retrieve-all
+   (select :project.*
+     (from :system_dependencies)
+     (left-join :system :on (:= :system_dependencies.depends_system_id :system.id))
+     (left-join :project :on (:= :system.project_id :project.id))
+     (where (:and (:!= :project_id (project-id project))
+                  (:in :system_dependencies.system_id
+                       (select :id
+                         (from :system)
+                         (where (:= :project_id (project-id project)))))))
+     (group-by :project.name))
+   :as 'project))
+
+@export
+(defun project-dependees (project)
+  (retrieve-all
+   (select :project.*
+     (from :system_dependencies)
+     (left-join :system :on (:= :system_dependencies.system_id :system.id))
+     (left-join :project :on (:= :system.project_id :project.id))
+     (where (:and (:!= :project_id (project-id project))
+                  (:in :system_dependencies.depends_system_id
+                       (select :id
+                         (from :system)
+                         (where (:= :project_id (project-id project)))))))
+     (group-by :project.name))
+   :as 'project))
 
 @export
 (defun retrieve-project (name &key (ql-dist-version (preference "ql-dist-version")))

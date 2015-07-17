@@ -22,6 +22,11 @@
                (from :system_dependencies)
                (left-join :system :on (:= :system_dependencies.depends_system_id :system.id))
                (where (:= :system_dependencies.system_id id))))
+            (:has-many (dependees system)
+             (select :system.*
+               (from :system_dependencies)
+               (left-join :system :on (:= :system_dependencies.system_id :system.id))
+               (where (:= :system_dependencies.depends_system_id id))))
             (:has-many (authors system-author)
              (select :*
                (from :system_author)
@@ -37,6 +42,8 @@
   homepage-url
   license)
 @export 'system-dependencies
+@export 'system-dependees
+@export 'system-authors
 
 @export
 (defun retrieve-system (name &key (ql-dist-version (preference "ql-dist-version")))
@@ -98,6 +105,14 @@
   system-id
   author-name
   type)
+
+@export
+(defun system-author= (author1 author2)
+  (and (eq (system-author-type author1)
+           (system-author-type author2))
+       (string=
+        (system-author-author-name author1)
+        (system-author-author-name author2))))
 
 @export
 (defun create-dependency (system-id depends-system-id &key is-for-defsystem)
