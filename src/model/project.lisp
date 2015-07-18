@@ -52,6 +52,24 @@
 @export 'project-systems
 
 @export
+(defun project-homepage-url* (project)
+  (with-slots (homepage-url) project
+    (when homepage-url
+      (return-from project-homepage-url* homepage-url)))
+  (let ((homepage (retrieve-one-value
+                   (select :homepage_url
+                     (from :repos_info)
+                     (where (:= :project_name (project-name project)))
+                     (limit 1))
+                   :homepage-url)))
+    (when homepage
+      (let ((homepage (babel:octets-to-string homepage)))
+        (if (and (<= 4 (length homepage))
+                 (string= "http" homepage :end2 4))
+            homepage
+            (format nil "http://~A" homepage))))))
+
+@export
 (defun project-systems* (project)
   (let* ((primary-system (project-primary-system project))
          (systems (remove (system-name primary-system)
