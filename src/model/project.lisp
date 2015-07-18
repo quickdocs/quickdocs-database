@@ -80,16 +80,25 @@
   (let* ((system (project-primary-system project))
          (description (system-description system)))
     (when description
-      (return-from project-description description))
+      (return-from project-description description)))
 
-    (let ((body (retrieve-one-value
-                 (select :body
-                   (from :cliki)
-                   (where (:= :project_name (project-name project)))
-                   (limit 1))
-                 :body)))
-      (when body
-        (babel:octets-to-string body)))))
+  (let ((description (retrieve-one-value
+                      (select :description
+                        (from :repos_info)
+                        (where (:= :project_name (project-name project)))
+                        (limit 1))
+                      :description)))
+    (when description
+      (return-from project-description (babel:octets-to-string description))))
+
+  (let ((body (retrieve-one-value
+               (select :body
+                 (from :cliki)
+                 (where (:= :project_name (project-name project)))
+                 (limit 1))
+               :body)))
+    (when body
+      (babel:octets-to-string body))))
 
 @export
 (defcached project-authors-all (project)
