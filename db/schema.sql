@@ -90,6 +90,12 @@ CREATE TABLE IF NOT EXISTS repos_info (
   UNIQUE KEY (project_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
+CREATE TABLE IF NOT EXISTS quicklisp_download_stats (
+  project_name VARCHAR(64) NOT NULL,
+  download_count INTEGER NOT NULL,
+  UNIQUE KEY (project_name)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
+
 CREATE TABLE IF NOT EXISTS preference (
   name VARCHAR(32) NOT NULL,
   value VARCHAR(128) NOT NULL DEFAULT '',
