@@ -143,7 +143,8 @@
 @model
 (defstruct (system-extracted-info (:inflate packages
                                    (lambda (packages)
-                                     (ignore-errors (read-from-string packages))))
+                                     (unless (= 0 (length packages))
+                                       (read-from-string packages))))
                                   (:inflate failed #'tinyint-to-boolean))
   packages
   failed
