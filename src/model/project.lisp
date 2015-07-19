@@ -40,7 +40,7 @@
                      (select :*
                        (from :system)
                        (where (:= :project_id id))))
-                    (:inflate (repos-url archive-url) #'octet-vector-to-string))
+                    (:inflate (homepage-url repos-url archive-url) #'octet-vector-to-string))
   id
   ql-dist-version
   name
