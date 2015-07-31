@@ -107,16 +107,14 @@
                         (limit 1))
                       :description)))
     (when description
-      (return-from project-description (babel:octets-to-string description))))
+      (return-from project-description description)))
 
-  (let ((body (retrieve-one-value
-               (select :body
-                 (from :cliki)
-                 (where (:= :project_name (project-name project)))
-                 (limit 1))
-               :body)))
-    (when body
-      (babel:octets-to-string body))))
+  (retrieve-one-value
+   (select :body
+     (from :cliki)
+     (where (:= :project_name (project-name project)))
+     (limit 1))
+   :body))
 
 @export
 (defcached project-authors-all (project)

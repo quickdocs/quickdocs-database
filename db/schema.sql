@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS system_extracted_info (
 
 CREATE TABLE IF NOT EXISTS cliki (
   project_name VARCHAR(64) NOT NULL,
-  body TEXT NOT NULL,
+  body TEXT CHARACTER SET utf8 NOT NULL,
   updated_at INTEGER NOT NULL,
   UNIQUE KEY (project_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS repos_info (
   project_name VARCHAR(64) NOT NULL,
   type ENUM('github', 'bitbucket') NOT NULL,
   repos_id TINYTEXT NOT NULL,
-  description TEXT,
+  description TEXT CHARACTER SET utf8,
   homepage_url TINYTEXT,
   watch_count INTEGER NOT NULL,
   forks_count INTEGER NOT NULL,
