@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS system_extracted_info (
 
 CREATE TABLE IF NOT EXISTS cliki (
   project_name VARCHAR(64) NOT NULL,
-  body TEXT CHARACTER SET utf8 NOT NULL,
+  body TEXT NOT NULL,
   updated_at INTEGER NOT NULL,
   UNIQUE KEY (project_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
