@@ -72,12 +72,14 @@
 @export
 (defun project-systems* (project)
   (let* ((primary-system (project-primary-system project))
-         (systems (remove (system-name primary-system)
-                          (project-systems project)
-                          :test #'string=
-                          :key #'system-name)))
-    (cons primary-system
-          systems)))
+         (systems (and primary-system
+                       (remove (system-name primary-system)
+                               (project-systems project)
+                               :test #'string=
+                               :key #'system-name))))
+    (when primary-system
+      (cons primary-system
+            systems))))
 
 @export
 (defun project-primary-system (project)
@@ -96,7 +98,7 @@
 @export
 (defun project-description (project)
   (let* ((system (project-primary-system project))
-         (description (system-description system)))
+         (description (and system (system-description system))))
     (when description
       (return-from project-description description)))
 
